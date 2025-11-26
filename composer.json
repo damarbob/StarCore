@@ -1,0 +1,17 @@
+{
+  "name": "damarbob/starcore",
+  "description": "The HMVC and Hook Orchestration Kernel for CodeIgniter 4",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "StarCore\\": "src/"
+    },
+    "files": [
+      "src/Helpers/star_helper.php"
+    ]
+  },
+  "require": {
+    "php": "^8.1",
+    "codeigniter4/framework": "^4.0"
+  }
+}
