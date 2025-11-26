@@ -1,6 +1,7 @@
 {
   "name": "damarbob/starcore",
   "description": "The HMVC and Hook Orchestration Kernel for CodeIgniter 4",
+  "license": "MIT",
   "type": "library",
   "autoload": {
     "psr-4": {
