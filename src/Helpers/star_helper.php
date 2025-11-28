@@ -54,17 +54,18 @@ if (!function_exists('hook')) {
         }
 
         $hookValue = $hooks[$lineKey];
+        $result = $hookValue->getName();
 
         // Replace placeholders if any are provided.
         if (! empty($params)) {
             foreach ($params as $find => $replace) {
                 // For example, if the hook value contains "{name}", it will be replaced.
-                $hookValue = str_replace('{' . $find . '}', $replace, $hookValue);
+                $result = str_replace('{' . $find . '}', $replace, $result);
             }
         }
 
-        // Return the hook's name (assuming getName() is the method to access it)
-        return $hookValue->getName();
+        // Return the hook's name
+        return $result;
     }
 }
 

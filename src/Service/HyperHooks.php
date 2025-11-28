@@ -150,4 +150,13 @@ class HyperHooks
     {
         return $this->state[$key] ?? null;
     }
+
+    /**
+     * Clear all registered hooks.
+     */
+    public function clearAll(): void
+    {
+        $this->hooks = [];
+        $this->state = [];
+    }
 }

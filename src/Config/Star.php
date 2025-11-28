@@ -40,7 +40,8 @@ class Star extends BaseConfig
                 $this->activeModules = implode(',', $mergedModules);
             }
         } else {
-            // In safe mode, development modules are disabled.
+            // In safe mode, all modules are disabled.
+            $this->activeModules = '';
             $this->activeDevModules = '';
         }
     }
