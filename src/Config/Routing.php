@@ -167,6 +167,8 @@ class Routing extends BaseRouting
         $this->routeFiles = array_merge($moduleRoutes, $this->routeFiles);
 
         // Register module routes so that modules can add their own routes.
-        log_message('info', 'Module routes registered.');
+        if ($star->log) {
+            log_message('info', 'Module routes registered.');
+        }
     }
 }

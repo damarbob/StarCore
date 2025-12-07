@@ -6,6 +6,12 @@ use CodeIgniter\Config\BaseConfig;
 
 class Star extends BaseConfig
 {
+    // Enable logging for StarCore.
+    public bool $log = true;
+
+    // Log level for StarCore. Currently supported levels are 0 (high level) and 1 (low level). Setting to 1 will log more information including the level 0.
+    public int $logLevel = 0;
+
     public string $kernelName = 'StarCore';
     public string $kernelVersion = '0.1.0-alpha.1';
 
@@ -27,7 +33,9 @@ class Star extends BaseConfig
     public function __construct()
     {
         parent::__construct();
-        log_message('debug', 'StarCore Kernel Config loaded.');
+        if ($this->log) {
+            log_message('info', 'StarCore Kernel Config loaded.');
+        }
 
         if (!$this->safeMode) {
             if (empty($this->activeModules)) {
