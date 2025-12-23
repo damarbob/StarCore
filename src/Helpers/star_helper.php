@@ -24,6 +24,14 @@ if (!function_exists('hook')) {
         }
         list($group, $lineKey) = $parts;
 
+        // Security Check: Prevent Path Traversal
+        // Only allow alphanumeric, underscore, dash, and directory separators.
+        // This blocks dots, preventing ".." traversal.
+        if (!preg_match('/^[a-zA-Z0-9_\-\/\\\\]+$/', $group)) {
+            log_message('error', 'Security: Invalid hook group name detected: ' . $group);
+            return '';
+        }
+
         // Use service('locator') to locate the hook file in all namespaces
         /** @var CodeIgniter\Autoloader\FileLocatorInterface */
         $locator = service('locator');
@@ -78,55 +86,73 @@ if (!function_exists('dump_hooks')) {
      */
     function dump_hooks(?string $group = null): array
     {
-        static $allHooks = null;
+        static $allHooks = [];
+        static $isFullCache = false;
 
-        // If no group specified and we have cached all hooks, return them
-        if ($group === null && $allHooks !== null) {
+        // Security Check: If group is specified, validate it
+        if ($group !== null && !preg_match('/^[a-zA-Z0-9_\-\/\\\\]+$/', $group)) {
+            log_message('error', 'Security: Invalid hook group name detected in dump_hooks: ' . $group);
+            return [];
+        }
+
+        // If no group specified and we have fully cached all hooks, return them
+        if ($group === null && $isFullCache) {
             return $allHooks;
         }
 
         // If a group is specified and we have it cached, return just that group
-        if ($group !== null && $allHooks !== null && isset($allHooks[$group])) {
+        if ($group !== null && isset($allHooks[$group])) {
             return [$group => $allHooks[$group]];
         }
 
         /** @var CodeIgniter\Autoloader\FileLocatorInterface */
         $locator = service('locator');
-        $hooks = [];
 
         if ($group === null) {
             // Get all hook files in all namespaces
             $files = $locator->listFiles('Hooks/');
+            $hooks = [];
 
             foreach ($files as $file) {
+                // Ensure we get the correct group name relative to Hooks/ directory if needed, 
+                // but standard practice here seems to be filename as group.
                 $currentGroup = pathinfo($file, PATHINFO_FILENAME);
-                $loadedHooks = require $file;
-                if (is_array($loadedHooks)) {
-                    $hooks[$currentGroup] = $loadedHooks;
+
+                // We re-require to ensure freshness if not fully cached, or we could check isset.
+                // Given the issue was incomplete cache, we should populate what's missing or just rebuild.
+                // To be safe and consistent with "dump", let's reload or check cache.
+                if (isset($allHooks[$currentGroup])) {
+                    $hooks[$currentGroup] = $allHooks[$currentGroup];
+                } else {
+                    $loadedHooks = require $file;
+                    if (is_array($loadedHooks)) {
+                        $hooks[$currentGroup] = $loadedHooks;
+                        $allHooks[$currentGroup] = $loadedHooks;
+                    }
                 }
             }
 
-            // Cache all hooks for future calls
-            $allHooks = $hooks;
+            // Mark as fully cached
+            $isFullCache = true;
+            // Ensure $allHooks contains everything we just found (in case of updates)
+            $allHooks = $hooks; // Rely on the fresh scan
+
+            return $hooks;
         } else {
             // Search specifically for the requested group
+            // We already checked cache above, so this is a miss.
             $files = $locator->search('Hooks/' . $group . '.php');
 
             if (!empty($files)) {
                 $file = reset($files); // Get the first found file
                 $loadedHooks = require $file;
                 if (is_array($loadedHooks)) {
-                    $hooks[$group] = $loadedHooks;
-
-                    // Cache this group in the allHooks cache
-                    if ($allHooks === null) {
-                        $allHooks = [];
-                    }
                     $allHooks[$group] = $loadedHooks;
+                    return [$group => $loadedHooks];
                 }
             }
         }
 
-        return $hooks;
+        return [];
     }
 }
