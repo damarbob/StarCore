@@ -28,7 +28,7 @@ By default, StarCore looks for modules in the `modules/` directory. You can conf
 ```php
 // app/Config/Star.php
 
-public string $activeModules = 'Blog,Auth,Shop';
+protected string $activeModules = 'Blog,Auth,Shop';
 ```
 
 Alternatively, you can set this in your `.env` file:
@@ -44,7 +44,7 @@ Development modules are located in the `modules/.star-dev/` directory. These mod
 You can configure active development modules in `Config/Star.php`:
 
 ```php
-public string $activeDevModules = 'DebugToolbar,Generator';
+protected string $activeDevModules = 'DebugToolbar,Generator';
 ```
 
 Alternatively, you can set this in your `.env` file:
@@ -160,7 +160,7 @@ modules/
 
 ## Module Autoloading
 
-StarCore automatically discovers and loads modules located in the `modules/` directory (and `modules/.star-dev/` for development modules). This process happens during the `pre_system` event.
+StarCore automatically discovers and loads modules located in the `modules/` directory (and `modules/.star-dev/` for development modules). This process happens **immediately** when the library is loaded (before the `pre_system` event) to ensure namespaces and event listeners are available during the application bootstrapping.
 
 1.  **Namespace Registration**: The autoloader automatically registers the module's namespace based on its directory name. For example, a module in `modules/Blog` will have the `Blog` namespace registered.
 2.  **Initialization**: If an `init.php` file exists in the module's root, it is executed. This is the ideal place to register hooks or perform other setup tasks.
