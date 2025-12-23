@@ -12,7 +12,6 @@ class StarTest extends CIUnitTestCase
     {
         $reflection = new ReflectionClass($object);
         $reflection_property = $reflection->getProperty($property);
-        $reflection_property->setAccessible(true);
         $reflection_property->setValue($object, $value);
     }
 
