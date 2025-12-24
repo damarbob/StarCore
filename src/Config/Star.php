@@ -13,7 +13,7 @@ class Star extends BaseConfig
     public int $logLevel = 0;
 
     public string $kernelName = 'StarCore';
-    public string $kernelVersion = '0.2.0-beta.2';
+    public string $kernelVersion = '0.2.0';
 
     public string $modulesPath = ROOTPATH . 'modules' . DIRECTORY_SEPARATOR;
     public string $devModulesPath = ROOTPATH . 'modules' . DIRECTORY_SEPARATOR . '.star-dev' . DIRECTORY_SEPARATOR;
