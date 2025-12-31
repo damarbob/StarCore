@@ -125,6 +125,28 @@ return [
 
 You can then access these hooks using `hook('Frontend.header')` or `hook('Frontend.footer')`.
 
+#### Dynamic Hook Names
+
+You can use placeholders in your hook values to make them dynamic. Placeholders are defined using curly braces, e.g., `{name}`.
+
+**1. Create a hook with a placeholder:**
+
+```php
+// modules/Blog/Hooks/Greetings.php
+return [
+    'welcome' => new HyperHook('welcome', 'Welcome Message', 'Welcome back, {name}!'),
+];
+```
+
+**2. Retrieve the hook with parameters:**
+
+Pass an associative array as the second argument to the `hook()` helper to replace the placeholders.
+
+```php
+// Returns "Welcome back, John!"
+echo hook('Greetings.welcome', ['name' => 'John']);
+```
+
 ## Module Structure
 
 A typical module structure looks like this:
